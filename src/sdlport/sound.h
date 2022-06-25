@@ -15,12 +15,14 @@
 #   include "SDL_mixer.h"
 #endif
 
-/* options are passed via command line */
+#include "bgm.h"
+#define ENABLE_MUSIC 1
+#define ENABLE_SFX   1
 
-#define SFX_INITIALIZED    1
-#define MUSIC_INITIALIZED  2
+bool sfx_enabled(uint8_t sound_system_state);
+bool music_enabled(uint8_t sound_system_state);
 
-int sound_init(int argc, char **argv);
+uint8_t sound_init(int argc, char **argv);
 void sound_uninit();
 void print_sound_options(); // print the options avaible for sound
 
@@ -38,7 +40,7 @@ private:
 #endif
 };
 
-class song
+class song : public bgm
 {
 public:
 #if !defined __CELLOS_LV2__
@@ -60,6 +62,8 @@ private:
     SDL_RWops* rw;
 #endif
 };
+
+void start_level_bgm(char *level_name, bgm **current_song, int music_volume);
 
 #endif
 

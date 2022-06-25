@@ -151,7 +151,7 @@ void handle_no_space()
 
 void Game::play_sound(int id, int vol, int32_t x, int32_t y)
 {
-    if(!(sound_avail & SFX_INITIALIZED))
+    if(!sfx_enabled(sound_avail))
         return;
     if(vol < 1)
         return;
@@ -1153,20 +1153,21 @@ void do_title()
     if(cdc_logo == -1)
         return;
 
-    if(sound_avail & MUSIC_INITIALIZED)
+    if(music_enabled(sound_avail))
     {
         if(current_song)
         {
             current_song->stop();
             delete current_song;
         }
+        // todo: unhardcode, make redbook-compatible
         current_song = new song("music/intro.hmi");
         current_song->play(music_volume);
     }
 
     void *logo_snd = LSymbol::FindOrCreate("LOGO_SND")->GetValue();
 
-    if(DEFINEDP(logo_snd) && (sound_avail & SFX_INITIALIZED))
+    if(DEFINEDP(logo_snd) && sfx_enabled(sound_avail))
         cache.sfx(lnumber_value(logo_snd))->play(sfx_volume);
 
     // This must be a dynamic allocated image because if it
@@ -1238,7 +1239,7 @@ void do_title()
             while(wm->IsPending() && ev.type != EV_KEY)
                 wm->get_event(ev);
 
-            if((i % 5) == 0 && DEFINEDP(space_snd) && (sound_avail & SFX_INITIALIZED))
+            if((i % 5) == 0 && DEFINEDP(space_snd) && sfx_enabled(sound_avail))
                 cache.sfx(lnumber_value(space_snd))->play(sfx_volume * 90 / 127);
 
             frame.WaitMs(25.f);
@@ -1794,14 +1795,14 @@ void Game::get_input()
                                         if(ev.message.id == RAISE_MUSIC && music_volume != 126)
                                         {
                                             music_volume = Min(music_volume + 16, 127);
-                                            if(current_song && (sound_avail & MUSIC_INITIALIZED))
+                                            if(current_song && music_enabled(sound_avail))
                                                 current_song->set_volume(music_volume);
                                         }
 
                                         if(ev.message.id == LOWER_MUSIC && music_volume != 0)
                                         {
                                             music_volume = Max(music_volume - 16, 0);
-                                            if(current_song && (sound_avail & MUSIC_INITIALIZED))
+                                            if(current_song && music_enabled(sound_avail))
                                                 current_song->set_volume(music_volume);
                                         }
 
@@ -2224,7 +2225,7 @@ void check_for_lisp(int argc, char **argv)
 
 void music_check()
 {
-  if(sound_avail & MUSIC_INITIALIZED)
+  if(music_enabled(sound_avail))
   {
     if(current_song && !current_song->playing())
     {
@@ -2233,7 +2234,7 @@ void music_check()
     }
     if(!current_song)
     {
-
+      // todo: unhardcode, make redbook-compliant
       current_song = new song("music/intro.hmi");
       current_song->play(music_volume);
 

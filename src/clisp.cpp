@@ -2050,7 +2050,7 @@ long c_caller(long number, void *args)
     } break;
     case 249 :
     {
-      if ((sound_avail&MUSIC_INITIALIZED))
+      if (music_enabled(sound_avail))
       {
     char *fn=lstring_value(CAR(args));
     if (current_song)

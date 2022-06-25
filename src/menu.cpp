@@ -293,7 +293,7 @@ static void create_volume_window()
                     sfx_volume = 127;
                 volume_window->draw_sfx_vol();
                 s = "sfx/ambtech1.wav";
-                if(sound_avail & SFX_INITIALIZED)
+                if(sfx_enabled(sound_avail))
                     cache.sfx(cache.reg(s, s, SPEC_EXTERN_SFX, 1))
                         ->play(sfx_volume);
                 break;
@@ -303,7 +303,7 @@ static void create_volume_window()
                     sfx_volume = 0;
                 volume_window->draw_sfx_vol();
                 s = "sfx/ambtech1.wav";
-                if(sound_avail & SFX_INITIALIZED)
+                if(sfx_enabled(sound_avail))
                     cache.sfx(cache.reg(s, s, SPEC_EXTERN_SFX, 1))
                         ->play(sfx_volume);
                 break;

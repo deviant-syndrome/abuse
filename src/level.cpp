@@ -1473,6 +1473,7 @@ void get_prof_assoc_filename(char *filename, char *prof_filename)
   *s2=0;
 }
 
+
 void level::level_loaded_notify()
 {
   char *n;
@@ -1480,24 +1481,7 @@ void level::level_loaded_notify()
     n=first_name;
   else
     n=name();
-  if (strstr(n,"levels/level"))
-  {
-    char nm[100];
-    sprintf(nm,"music/abuse%c%c.hmi",n[12],n[13]);
-    bFILE *fp=open_file(nm,"rb");
-    if (fp->open_failure())
-    {
-      delete fp;
-    }
-    else
-    {
-      if (current_song) { current_song->stop(); delete current_song; }
-
-      delete fp;
-      current_song=new song(nm);
-      current_song->play(music_volume);
-    }
-  }
+    start_level_bgm(n, &current_song, music_volume);
 
 /*  if (DEFINEDP(symbol_function(l_level_loaded)))
   {

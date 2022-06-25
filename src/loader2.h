@@ -43,8 +43,9 @@ extern uint16_t current_start_type,start_position_type;
 /******************************* SOUND EFFECTS **********************************/
 extern int raise_volume,lower_volume,record_button,play_button,music_button,sfx_button;
 
-extern int sfx_volume,music_volume,sound_avail;
-extern song *current_song;
+extern int sfx_volume,music_volume;
+extern uint8_t sound_avail;
+extern bgm *current_song;
 
 /******************************** SCREEN FRAME **********************************/
 extern int border_tile,window_texture,

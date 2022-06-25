@@ -226,7 +226,7 @@ void show_end2()
     time_marker new_time;
     if (new_time.diff_time(&old_time)>0.1)
     {
-      if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
+      if ((i%10)==0 && sfx_enabled(sound_avail))
         cache.sfx(space_snd)->play(64);
 
       old_time.get_time();
@@ -259,7 +259,7 @@ void show_end2()
 
         scale_put_trans(s,main_screen,ex-(i-38)*5,ey+cache.img(mask)->Size().y/2+t*4,nw,nh);
     if (i==77)
-      if (sound_avail&SFX_INITIALIZED)
+      if (sfx_enabled(sound_avail))
             cache.sfx(zip_snd)->play(127);
       }
 
@@ -278,7 +278,7 @@ void show_end2()
     time_marker new_time;
     if (new_time.diff_time(&old_time)>0.1)
     {
-      if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
+      if ((i%10)==0 && sfx_enabled(sound_avail))
         cache.sfx(space_snd)->play(64);
 
       old_time.get_time();
@@ -299,7 +299,7 @@ void show_end2()
       {
         clist=new ex_char(ex+jrand()%(cache.img(mask)->Size().x-cache.img(mask)->Size().x/3),
             ey+jrand()%(cache.img(mask)->Size().y-cache.img(mask)->Size().y/3),0,1,clist);
-    if (sound_avail&SFX_INITIALIZED)
+    if (sfx_enabled(sound_avail))
           cache.sfx(explo_snd)->play(127);
       }
 
@@ -348,7 +348,7 @@ void show_end2()
     time_marker new_time;
     if (new_time.diff_time(&old_time)>0.1)
     {
-      if ((i%10)==0 && (sound_avail&SFX_INITIALIZED))
+      if ((i%10)==0 && sfx_enabled(sound_avail))
         cache.sfx(space_snd)->play(64);
 
       old_time.get_time();

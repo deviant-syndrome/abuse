@@ -32,19 +32,42 @@
 
 #include "sound.h"
 #include "hmi.h"
+#include "dsubdir.hpp"
+#include "sndtrack.h"
 #include "specs.h"
 #include "setup.h"
 
 extern flags_struct flags;
-static int sound_enabled = 0;
+static bool sound_system_started = 0;
+static bool can_play_sfx = 0;
+
+char* sfx_subdir = (char *)"sfx";
+char* music_subdir = (char *)"music";
+
 static SDL_AudioSpec audioObtained;
+
+static soundtrack* soundtrack = NULL;
+
+enum SoundSystemState {
+    SFX_ENABLED = (1u << 0),
+    MUSIC_ENABLED = (1u << 1),
+};
+
+bool music_enabled(uint8_t sound_system_state) {
+   return sound_system_state & MUSIC_ENABLED;
+}
+
+bool sfx_enabled(uint8_t sound_system_state) {
+   return sound_system_state & SFX_ENABLED;
+}
 
 //
 // sound_init()
 // Initialise audio
 //
-int sound_init( int argc, char **argv )
+uint8_t sound_init( int argc, char **argv )
 {
+    uint8_t state = 0;
     char *sfxdir, *datadir;
 
     // Disable sound if requested.
@@ -54,26 +77,38 @@ int sound_init( int argc, char **argv )
         printf( "Sound: Disabled (-nosound)\n" );
         return 0;
     }
-
-    // Check for the sfx directory, disable sound if we can't find it.
-    datadir = get_filename_prefix();
-    sfxdir = (char *)malloc( strlen( datadir ) + 5 + 1 );
-    sprintf( sfxdir, "%ssfx", datadir );
-#ifdef WIN32
-    // Attempting to fopen a directory under Windows will fail, and
-    // opendir does not exist. Use GetFileAttributes instead.
-    if( GetFileAttributes( sfxdir ) == INVALID_FILE_ATTRIBUTES )
-#else
-    FILE *fd = NULL;
-    if( (fd = fopen( sfxdir,"r" )) == NULL )
-#endif
-    {
-        // Didn't find the directory, so disable sound.
-        printf( "Sound: Disabled (couldn't find the sfx directory %s)\n", sfxdir );
+    
+    if (!ENABLE_MUSIC && !ENABLE_SFX) {
+        printf( "Sound: Binary was built without the audio support (see sound.h)");
         return 0;
     }
-    free( sfxdir );
 
+    if (ENABLE_MUSIC) {
+        if (data_sub_dir_exists(sfx_subdir)) {
+            can_play_sfx = true;
+            state |= SFX_ENABLED;
+            printf("Sound: SFX enabled\n");
+        } else {
+            printf("Sound: SFX directory not found. Disabling sound effects\n");
+        }
+    }
+    
+    if (ENABLE_SFX) {
+        // todo: add logic/checks for redbook audio soundtrack being explicitly disabled
+        // according to special cmd line arguments (introduce new ones)
+        if (data_sub_dir_exists(music_subdir)) {
+            state |= MUSIC_ENABLED;
+            printf( "Sound: Music enabled\n" );
+        } else {
+            printf( "Sound: MUSIC directory not found. Disabling music playback\n" );
+        }
+    }
+    
+    if (!sfx_enabled(state) && !music_enabled(state)) {
+        printf( "Sound: Could not find neither sound nor music data. Skipping soundsystem initialisation\n" );
+        return 0;
+    }
+    
     if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024) < 0)
     {
         printf( "Sound: Unable to open audio - %s\nSound: Disabled (error)\n", SDL_GetError() );
@@ -86,12 +121,11 @@ int sound_init( int argc, char **argv )
     Mix_QuerySpec(&audioObtained.freq, &audioObtained.format, &tempChannels);
     audioObtained.channels = tempChannels & 0xFF;
 
-    sound_enabled = SFX_INITIALIZED | MUSIC_INITIALIZED;
+    printf( "Sound: SDL soundsystem started\n" );
 
-    printf( "Sound: Enabled\n" );
-
-    // It's all good
-    return sound_enabled;
+    sound_system_started = true;
+    soundtrack = new class soundtrack(state);
+    return state;
 }
 
 //
@@ -101,7 +135,7 @@ int sound_init( int argc, char **argv )
 //
 void sound_uninit()
 {
-    if (!sound_enabled)
+    if (!sound_system_started)
         return;
 
     Mix_CloseAudio();
@@ -114,7 +148,7 @@ void sound_uninit()
 //
 sound_effect::sound_effect(char const *filename)
 {
-    if (!sound_enabled)
+    if (!can_play_sfx)
         return;
 
     jFILE fp(filename, "rb");
@@ -135,7 +169,7 @@ sound_effect::sound_effect(char const *filename)
 //
 sound_effect::~sound_effect()
 {
-    if(!sound_enabled)
+    if(!can_play_sfx)
         return;
 
     // Sound effect deletion only happens on level load, so there
@@ -161,7 +195,7 @@ sound_effect::~sound_effect()
 //
 void sound_effect::play(int volume, int pitch, int panpot)
 {
-    if (!sound_enabled)
+    if (!can_play_sfx)
         return;
 
     int channel = Mix_PlayChannel(-1, m_chunk, 0);
@@ -242,4 +276,8 @@ int song::playing()
 void song::set_volume( int volume )
 {
     Mix_VolumeMusic(volume);
+}
+
+void start_level_bgm(char *level_name, bgm **current_song, int music_volume) {
+    soundtrack->play_level_bgm(level_name, current_song, music_volume);
 }

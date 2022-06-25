@@ -828,7 +828,7 @@ int CacheList::reg(char const *filename, char const *name, int type, int rm_dups
                 exit(0);
             }
         }
-        else if (sound_avail)
+        else if (sfx_enabled(sound_avail))
         {
             printf("Unable to open file '%s' for reading\n", filename);
             exit(0);

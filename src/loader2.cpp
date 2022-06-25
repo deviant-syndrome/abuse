@@ -44,8 +44,9 @@ property_manager *prop;
 int *backtiles;
 int *foretiles;
 JCFont *big_font,*console_font;
-int nforetiles,nbacktiles,f_wid,f_hi,b_wid,b_hi,total_songs=0,sfx_volume,music_volume,sound_avail=0;
-song *current_song=NULL;
+int nforetiles,nbacktiles,f_wid,f_hi,b_wid,b_hi,total_songs=0,sfx_volume,music_volume;
+uint8_t sound_avail = 0;
+bgm *current_song=NULL;
 
 uint16_t current_start_type,start_position_type,last_start_number;
 int light_buttons[13];

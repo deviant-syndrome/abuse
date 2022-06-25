@@ -1,4 +1,4 @@
-Abuse README
+Abuse SE README
 ============
 
 This is a fork of the original Abuse SDL port from <http://abuse.zoy.org/>. It
@@ -20,19 +20,26 @@ switches the build system to CMake to make crossplatform building easier.
 
 ## 1. INTRODUCTION
 
-Welcome to Abuse, the port of the classic game Abuse to the Simple
+Welcome to Abuse SE, the port of the classic game Abuse to the Simple
 DirectMedia Layer. Abuse was originally developed by Crack dot Com and
 released in 1995 for MS-DOS. A Linux version was also made available at
 a later date. It had a few limitations the most restrictive of which was
 that it only ran on an 8-bit display, and only in a window.
 
-The version of Abuse will run at any color depth and supports fullscreen mode,
+This version of Abuse will run at any color depth and supports fullscreen mode,
 as well as many other new features. It should also be more portable and
 hopefully run on a variety of *nix variants, as well as Windows and macOS.
 
+Main purpose of this fork would be re-imagining of the original game, as if it
+was re-issued as a deluxe/chanced CD-edition, which would include a new CD soundtrack
+as well as some rendered cutscenes, to sink you deeper down into the gritty sci-fi horror 
+world of Abuse. 
+
+This port is a work in progress. 
+
 ## 2. ADDITIONAL FEATURES
 
-Abuse has the following extra features over the original:
+Abuse SE has the following extra features over the original:
 
   * Runs at a screen bit depth of 8, 16, 24 or 32.
   * Fullscreen display.
@@ -41,6 +48,8 @@ Abuse has the following extra features over the original:
   * Stereo sound with panning.
   * Mouse wheel support for changing weapons.
   * Customizable keys.
+  * CD-quality soundtrack support
+  * (planned) Pre-rendered cutscenes playback support 
 
 ## 3. REQUIREMENTS
 
@@ -144,7 +153,21 @@ Abuse is run. See section 4 above.
 Finally, the location can be set in the configuration file. See section
 5 above.
 
-## 7. NOTES
+
+## 7. CD SOUNDTRACK
+
+Currently, a completely new CD soundtrack for this version of Abuse is in the works. The necessary 
+code changes to support this are already in the branch. WAVE file playback is built using the SDL library. 
+
+Unless, explicitly disabled, *.WAV files placed in `/music/cd` data directory are preferred over found
+HMI files in the original distribution, i.e. if both `/music/abuse00.hmi` and `/music/cd/track00.wav` are 
+present, the WAV soundtrack will be picked.
+
+In the future, a proper red book CD track structure will be supported, where the first CD track is reserved
+for the game data, and all the rest, are named incrementally (`track%02d.wav`). That would require some mapping conventions, as currently, 
+ABUSE loads off-game music (intro, menu and ending) directly by name, rather than track number.  
+
+## 8. NOTES
 
 ### Scaling:
   Scaling is still experimental and not very fast.  Try scaling by different
