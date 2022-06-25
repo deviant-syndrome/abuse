@@ -4,3 +4,33 @@
 # Ignore various backup files
 *.bak
 *~
+
+# Temp: ignore XCode build artifacts, seems I've put them in the wrong dirs
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+CPackConfig.cmake
+CPackSourceConfig.cmake
+abuse.build/
+abuse.xcodeproj/
+cmake_install.cmake
+config.h
+data/ 
+defaults.prp
+data/cmake_install.cmake
+src/CMakeFiles/
+src/Debug/
+src/abuse.build/
+src/cmake_install.cmake
+src/imlib/Debug/
+src/imlib/abuse.build/
+src/imlib/cmake_install.cmake
+src/lisp/Debug/
+src/lisp/abuse.build/
+src/lisp/cmake_install.cmake
+src/net/Debug/
+src/net/abuse.build/
+src/net/cmake_install.cmake
+src/sdlport/Debug/
+src/sdlport/abuse.build/
+src/sdlport/cmake_install.cmake
